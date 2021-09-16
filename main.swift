@@ -90,29 +90,32 @@ print("\n ЗАДАНИЕ 6")
 // Заполнить массив из 100 элементов различными простыми числами (делится только на себя и на единицу).
 
 var tempArray = [1, 2]
-var simpleDigits = [2]
-var p  = 2
-//var i = 0
 
-//заполняем массим числами
-for i in (tempArray.count - 1)...1499 {
+//заполняем массив числами
+for i in (tempArray.count - 1)...99 {
     tempArray.append(tempArray[i] + 1)
 }
-print(tempArray)
+print("Исходный массив чисел", tempArray)
 
 //исключаем не простые числа
 var startI = 2
 var endI = tempArray.count
 var ind = startI
-repeat {
-    if tempArray[ind] % startI == 0 {
-        tempArray.remove(at: ind)
-       
+var isNeedIncreaseIndex = true
+
+while ind < endI {
+    for j in startI...tempArray[ind] - 1 {
+        if tempArray[ind] % j == 0 {
+            tempArray.remove(at: ind)
+            endI = tempArray.count
+            isNeedIncreaseIndex = false
+            break
+        }
     }
-    endI = tempArray.count
-    if ind == endI - 1 {
-        ind = startI + 1
+    if isNeedIncreaseIndex {
+        ind += 1
+    } else {
+        isNeedIncreaseIndex = true
     }
-    ind += 1;
-} while ind < endI - 1
-print(tempArray)
+}
+print("Массив с простыми числами", tempArray)
