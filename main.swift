@@ -1,17 +1,23 @@
 //
 //  main.swift
-//  L3_ZDA
+//  L4_ZDA
 //
-//  Created by Дмитрий Заика on 19.09.2021.
+//  Created by Дмитрий Заика on 23.09.2021.
 //
 
 import Foundation
-//MARK: - ЗАДАНИЕ 1
-print("ЗАДАНИЕ 1")
-//1. Описать несколько структур – любой легковой автомобиль SportCar и любой грузовик TrunkCar.
+
+// 1. Описать класс Car c общими свойствами автомобилей и пустым методом действия по аналогии с прошлым заданием.
+// 2. Описать пару его наследников TrunkCar и SportCar. Подумать, какими отличительными свойствами обладают эти автомобили. Описать в каждом наследнике специфичные для него свойства.
+// 3. Взять из прошлого урока enum с действиями над автомобилем. Подумать, какие особенные действия имеет TrunkCar, а какие – SportCar. Добавить эти действия в перечисление.
+// 4. В каждом подклассе переопределить метод действия с автомобилем в соответствии с его классом.
+// 5. Создать несколько объектов каждого класса. Применить к ним различные действия.
+// 6. Вывести значения свойств экземпляров в консоль.
+
 
 enum StateMotor {
     case stoped
+    case warming
     case worked
 }
 
@@ -35,13 +41,23 @@ enum ActionWithTrunk {
     case unload
 }
 
-struct sportCar {
+enum Fuel {
+    case Petrol
+    case Disel
+    case Gas
+    case Electro
+}
+
+
+//MARK: - Class Car
+class Car {
     let brand: String
     let model: String
     let type: String
     let yearCreated: Int
-    let countWheels: Int
-    let maxVolumefuelTank: Int
+    let powerHorse: Int
+    let placePassengers: Int
+    let maxVolumeFuelTank: Int
     let volumeTrunk: Int
     let motorType: String
 
@@ -49,118 +65,120 @@ struct sportCar {
     var stateMotor: StateMotor
     var stateWindows: StateWindows
     var usedVolumeTrunk: Int
-    var yearLastRepair: Int
 
-    mutating func manageMotor (action: ActionWithMotor) -> Bool {
-        if nowVolumeFuelTank > 5 {
-            switch action {
-            case .start:
-                self.stateMotor = StateMotor.worked
-                Swift.print("\(brand) " + "\(model) - " + "Motor start")
-                break
-            case .stop:
-                self.stateMotor = StateMotor.stoped
-                Swift.print("\(brand) " + "\(model) - " + "Motor stop")
-                break
+    static var count = 0
+
+    init(brand: String, model: String, type: String, yearCreated: Int,
+         powerHorse: Int, placePassengers: Int, maxVolumeFuelTank: Int,
+         volumeTrunk: Int, motorType: String, nowVolumeFuelTank: Int,
+         stateMotor: StateMotor, stateWindows: StateWindows,
+         usedVolumeTrunk: Int) {
+        self.brand = brand
+        self.model = model
+        self.type = type
+        self.yearCreated = yearCreated
+        self.powerHorse = powerHorse
+        self.placePassengers = placePassengers
+        self.maxVolumeFuelTank = maxVolumeFuelTank
+        self.volumeTrunk = volumeTrunk
+        self.motorType = motorType
+
+        self.nowVolumeFuelTank = nowVolumeFuelTank
+        self.stateMotor = stateMotor
+        self.stateWindows = stateWindows
+        self.usedVolumeTrunk = usedVolumeTrunk
+
+        Car.count += 1
+    }
+
+    deinit {
+        Car.count -= 1
+    }
+
+    static func countInfo() {
+        print("Всего создано \(self.count) автомобилей")
+    }
+
+    func loadingTrunk(action: ActionWithTrunk, volume: Int) { }
+    func loadingFuel (typeFuel: Fuel)
+    func startMotor() {}
+    func stopMotor() {}
+
+}
+//MARK: - Class TrunkCar
+final class TrunkCar: Car {
+    let trailer: String
+    let volumeCargoSection: Int
+
+    init(brand: String, model: String, type: String, yearCreated: Int,
+         powerHorse: Int, placePassengers: Int, maxVolumeFuelTank: Int,
+         volumeTrunk: Int, motorType: String, nowVolumeFuelTank: Int,
+         stateMotor: StateMotor, stateWindows: StateWindows,
+         usedVolumeTrunk: Int, trailer: String,
+         volumeCargoSection: Int ) {
+
+        self.trailer = trailer
+        self.volumeCargoSection = volumeCargoSection
+
+        super.init(brand: brand, model: model, type: type,
+                   yearCreated: yearCreated,
+                   powerHorse: powerHorse, placePassengers: placePassengers,
+                   maxVolumeFuelTank: maxVolumeFuelTank,
+                   volumeTrunk: volumeTrunk, motorType: motorType,
+                   nowVolumeFuelTank: nowVolumeFuelTank,
+                   stateMotor: stateMotor, stateWindows: stateWindows,
+                   usedVolumeTrunk: usedVolumeTrunk)
+    }
+
+    override func loadingTrunk(action: ActionWithTrunk, volume: Int) {
+        print("В \(brand) \(model) отсутствует багажник (Это TrunkCar)")
+    }
+}
+
+//MARK: - Class SportCar
+final class SportCar: Car {
+    let raceType: String
+
+    init(brand: String, model: String, type: String, yearCreated: Int,
+         powerHorse: Int, placePassengers: Int, maxVolumeFuelTank: Int,
+         volumeTrunk: Int, motorType: String, nowVolumeFuelTank: Int,
+         stateMotor: StateMotor, stateWindows: StateWindows,
+         usedVolumeTrunk: Int, raceType: String) {
+
+        self.raceType = raceType
+
+        super.init(brand: brand, model: model, type: type,
+                   yearCreated: yearCreated,
+                   powerHorse: powerHorse, placePassengers: placePassengers,
+                   maxVolumeFuelTank: maxVolumeFuelTank,
+                   volumeTrunk: volumeTrunk, motorType: motorType,
+                   nowVolumeFuelTank: nowVolumeFuelTank,
+                   stateMotor: stateMotor, stateWindows: stateWindows,
+                   usedVolumeTrunk: usedVolumeTrunk)
+    }
+
+    override func loadingTrunk(action: ActionWithTrunk, volume: Int) {
+        switch action {
+        case .load:
+            if super.usedVolumeTrunk <= super.maxVolumeFuelTank {
+                print("\(brand) " + "\(model) - " + "baggage added from ",  usedVolumeTrunk, " -> to ", usedVolumeTrunk + volume)
+                usedVolumeTrunk += volume
+            } else {
+                print("Don't added baggage " + "\(brand) " + "\(model) - " + "it's FULL")
             }
-            return true
-        } else {
-            print("Don't can started motor " + "\(brand) " + "\(model) - " + "please give more fuel")
-            return false
+        case .unload:
+            if usedVolumeTrunk - volume > 0 {
+                Swift.print("\(brand) " + "\(model) - " + "baggage upload",  usedVolumeTrunk, " -> to ", usedVolumeTrunk -= volume)
+                usedVolumeTrunk -= volume
+            } else {
+                print("don't upload baggage" + "\(brand) " + "\(model) - " + "so match")
+            }
         }
     }
 
-    mutating func manageWindows (action: ActionWithWindows) -> Bool {
-        if stateMotor ==  StateMotor.worked {
-            switch action {
-            case .open:
-                self.stateWindows = StateWindows.opened
-                Swift.print("\(brand) " + "\(model) - " + "Windows are opened")
-                break
-            case .close:
-                self.stateWindows = StateWindows.closed
-                Swift.print("\(brand) " + "\(model) - " + "Windows are closed")
-                break
-            }
-            return true
-        } else {
-            print("Don't can open/close windows " + "\(brand) " + "\(model) - " + "before start motor")
-            return false
-        }
-    }
-
-    mutating func loadingTrunk (action: ActionWithTrunk, volume: Int) -> Bool {
-            switch action {
-            case .load:
-                if usedVolumeTrunk <= self.maxVolumefuelTank {
-                    Swift.print("\(brand) " + "\(model) - " + "baggage added from ",  usedVolumeTrunk, " -> to ", usedVolumeTrunk + volume)
-                    usedVolumeTrunk += volume
-                    return true
-                } else {
-                    Swift.print("Don't added baggage " + "\(brand) " + "\(model) - " + "it's FULL")
-                    return false
-                }
-            case .unload:
-                if usedVolumeTrunk - volume > 0 {
-                    Swift.print("\(brand) " + "\(model) - " + "baggage upload",  usedVolumeTrunk, " -> to ", usedVolumeTrunk -= volume)
-                    usedVolumeTrunk -= volume
-                    return true
-                } else {
-                    print("don't upload baggage" + "\(brand) " + "\(model) - " + "so match")
-                    return false
-                }
-            }
-    }
 }
 
-var ferrariS30 = sportCar.init(brand: "ferrari",
-                               model: "S30",
-                               type: "sportCar",
-                               yearCreated: 2021,
-                               countWheels: 4,
-                               maxVolumefuelTank: 55,
-                               volumeTrunk: 200,
-                               motorType: "AXC2VC",
-                               nowVolumeFuelTank: 20,
-                               stateMotor: StateMotor.stoped,
-                               stateWindows: StateWindows.closed,
-                               usedVolumeTrunk: 100,
-                               yearLastRepair: 2019)
+var ferrari: SportCar = SportCar.init(brand: "Ferrari", model: "akroX", type: "SportCar", yearCreated: 2021, powerHorse: 480, placePassengers: 1, maxVolumeFuelTank: 55, volumeTrunk: 30, motorType: "QWER", nowVolumeFuelTank: 35, stateMotor: StateMotor.stoped, stateWindows: <#T##StateWindows#>, usedVolumeTrunk: <#T##Int#>, raceType: <#T##String#>)
 
-var renoRC20 = sportCar.init(brand: "reno",
-                             model: "RC20",
-                             type: "sportCar",
-                             yearCreated: 2020,
-                             countWheels: 4,
-                             maxVolumefuelTank: 42,
-                             volumeTrunk: 150,
-                             motorType: "AR1DC4",
-                             nowVolumeFuelTank: 40,
-                             stateMotor: StateMotor.stoped,
-                             stateWindows: StateWindows.closed,
-                             usedVolumeTrunk: 22,
-                             yearLastRepair: 2020)
 
-print(ferrariS30)
-print(renoRC20)
-
-if ferrariS30.manageMotor(action: ActionWithMotor.start) {
-   print("Motor good started! \n")
-} else {
-    print("Motor DON'T started!\n")
-}
-
-if renoRC20.loadingTrunk(action:  ActionWithTrunk.load, volume: 50) {
-    print("Load good ! \n")
-
-} else {
-     print("Bad result load \n")
-}
-
-ferrariS30.manageWindows(action: ActionWithWindows.open)
-renoRC20.manageWindows(action: ActionWithWindows.open)
-
-ferrariS30.loadingTrunk(action: ActionWithTrunk.load, volume: 200)
-renoRC20.manageMotor(action: ActionWithMotor.start)
-renoRC20.manageWindows(action: ActionWithWindows.open)
 
